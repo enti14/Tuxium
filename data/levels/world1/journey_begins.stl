@@ -3,7 +3,7 @@
   (name (_ "The Journey Begins"))
   (author "Carsten Wirtz")
   (license "CC-BY-SA 4.0 International")
-  (target-time 34)
+  (target-time 40)
   (allow-item-pocket "inherit")
   (icon "")
   (icon-locked "")
@@ -69,6 +69,30 @@
       (x 800)
       (y 672)
     )
+    (bonusblock
+      (type "purple")
+      (z-pos 51)
+      (x 1856)
+      (y 640)
+    )
+    (bonusblock
+      (type "orange")
+      (z-pos 51)
+      (x 4896)
+      (y 640)
+    )
+    (bonusblock
+      (type "orange")
+      (z-pos 51)
+      (x 7392)
+      (y 704)
+    )
+    (bonusblock
+      (type "purple")
+      (z-pos 51)
+      (x 9888)
+      (y 448)
+    )
     (camera
       (name "Camera")
       (mode "normal")
@@ -91,6 +115,51 @@
     (coin
       (z-pos 49)
       (x 4576)
+      (y 672)
+    )
+    (coin
+      (z-pos 49)
+      (x 1792)
+      (y 608)
+    )
+    (coin
+      (z-pos 49)
+      (x 1856)
+      (y 576)
+    )
+    (coin
+      (z-pos 49)
+      (x 1920)
+      (y 608)
+    )
+    (coin
+      (z-pos 49)
+      (x 4832)
+      (y 608)
+    )
+    (coin
+      (z-pos 49)
+      (x 4896)
+      (y 576)
+    )
+    (coin
+      (z-pos 49)
+      (x 4960)
+      (y 608)
+    )
+    (coin
+      (z-pos 49)
+      (x 7328)
+      (y 672)
+    )
+    (coin
+      (z-pos 49)
+      (x 7392)
+      (y 640)
+    )
+    (coin
+      (z-pos 49)
+      (x 7456)
       (y 672)
     )
     (decal

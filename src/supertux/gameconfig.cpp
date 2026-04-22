@@ -147,6 +147,18 @@ Config::Config() :
   multiplayer_buzz_controllers(false),
 #endif
   multiplayer_no_limit(false),
+  multiplayer_server_address("official.tuxium.net:7777"),
+  multiplayer_selected_server(0),
+  multiplayer_servers({
+    {"Official Tuxium", "official.tuxium.net:7777", "Official adventure server", true},
+    {"Community EU", "eu.tuxium.net:7777", "Fast-paced co-op", false}
+  }),
+  multiplayer_enable_online(false),
+  multiplayer_allow_lan_discovery(true),
+  multiplayer_host_public(false),
+  multiplayer_host_name("My Tuxium Server"),
+  multiplayer_host_port(7777),
+  multiplayer_host_max_players(4),
   touch_haptic_feedback(true),
   touch_just_directional(true),
   repository_url()
@@ -301,6 +313,53 @@ Config::load()
   config_mapping.get("multiplayer_multibind", multiplayer_multibind);
   config_mapping.get("multiplayer_buzz_controllers", multiplayer_buzz_controllers);
   config_mapping.get("multiplayer_no_limit", multiplayer_no_limit);
+  config_mapping.get("multiplayer_server_address", multiplayer_server_address);
+  config_mapping.get("multiplayer_selected_server", multiplayer_selected_server);
+  config_mapping.get("multiplayer_enable_online", multiplayer_enable_online);
+  config_mapping.get("multiplayer_allow_lan_discovery", multiplayer_allow_lan_discovery);
+  config_mapping.get("multiplayer_host_public", multiplayer_host_public);
+  config_mapping.get("multiplayer_host_name", multiplayer_host_name);
+  config_mapping.get("multiplayer_host_port", multiplayer_host_port);
+  config_mapping.get("multiplayer_host_max_players", multiplayer_host_max_players);
+  std::optional<ReaderCollection> multiplayer_servers_mapping;
+  if (config_mapping.get("multiplayer_servers", multiplayer_servers_mapping))
+  {
+    multiplayer_servers.clear();
+    for (auto const& server_node : multiplayer_servers_mapping->get_objects())
+    {
+      if (server_node.get_name() == "server")
+      {
+        auto server_mapping = server_node.get_mapping();
+        MultiplayerServer server;
+        server.favorite = false;
+        if (server_mapping.get("name", server.name) &&
+            server_mapping.get("address", server.address))
+        {
+          server_mapping.get("motd", server.motd);
+          server_mapping.get("favorite", server.favorite);
+          multiplayer_servers.push_back(server);
+        }
+      }
+    }
+  }
+
+  if (multiplayer_servers.empty())
+    multiplayer_servers.push_back({"Official Tuxium", "official.tuxium.net:7777", "Official adventure server", true});
+
+  if (multiplayer_selected_server < 0)
+    multiplayer_selected_server = 0;
+  else if (multiplayer_selected_server >= static_cast<int>(multiplayer_servers.size()))
+    multiplayer_selected_server = static_cast<int>(multiplayer_servers.size()) - 1;
+
+  if (multiplayer_host_port < 1)
+    multiplayer_host_port = 1;
+  else if (multiplayer_host_port > 65535)
+    multiplayer_host_port = 65535;
+
+  if (multiplayer_host_max_players < 2)
+    multiplayer_host_max_players = 2;
+  else if (multiplayer_host_max_players > 16)
+    multiplayer_host_max_players = 16;
   config_mapping.get("preferred_text_editor", preferred_text_editor);
 
   std::optional<ReaderMapping> config_video_mapping;
@@ -480,6 +539,25 @@ Config::save()
   writer.write("multiplayer_multibind", multiplayer_multibind);
   writer.write("multiplayer_buzz_controllers", multiplayer_buzz_controllers);
   writer.write("multiplayer_no_limit", multiplayer_no_limit);
+  writer.write("multiplayer_server_address", multiplayer_server_address);
+  writer.write("multiplayer_selected_server", multiplayer_selected_server);
+  writer.write("multiplayer_enable_online", multiplayer_enable_online);
+  writer.write("multiplayer_allow_lan_discovery", multiplayer_allow_lan_discovery);
+  writer.write("multiplayer_host_public", multiplayer_host_public);
+  writer.write("multiplayer_host_name", multiplayer_host_name);
+  writer.write("multiplayer_host_port", multiplayer_host_port);
+  writer.write("multiplayer_host_max_players", multiplayer_host_max_players);
+  writer.start_list("multiplayer_servers");
+  for (const auto& server : multiplayer_servers)
+  {
+    writer.start_list("server");
+    writer.write("name", server.name);
+    writer.write("address", server.address);
+    writer.write("motd", server.motd);
+    writer.write("favorite", server.favorite);
+    writer.end_list("server");
+  }
+  writer.end_list("multiplayer_servers");
   writer.write("preferred_text_editor", preferred_text_editor);
 
   writer.start_list("interface_colors");

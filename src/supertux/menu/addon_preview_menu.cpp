@@ -372,7 +372,7 @@ AddonPreviewMenu::toggle_addon()
 
   if (m_addon.requires_restart())
   {
-    Dialog::show_message(_("Please restart SuperTux\nfor these changes to take effect."));
+    Dialog::show_message(_("Please restart Tuxium\nfor these changes to take effect."));
   }
   MenuManager::instance().previous_menu()->refresh();
 }

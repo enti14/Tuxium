@@ -31,7 +31,7 @@ class GameSession;
 class Savegame;
 class Sector;
 
-/** Screen that displays the SuperTux logo, lets players start a new
+/** Screen that displays the title text, lets players start a new
     game, etc. */
 class TitleScreen final : public Screen,
                           public Currenton<TitleScreen>
@@ -61,7 +61,6 @@ private:
   Savegame& m_savegame;
   const bool m_christmas;
 
-  SurfacePtr m_logo;
   SurfacePtr m_santahat;
   SurfacePtr m_frame;
 
