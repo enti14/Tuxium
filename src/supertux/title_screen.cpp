@@ -20,6 +20,7 @@
 
 #include <version.h>
 #include <config.h>
+#include <generated_branding.hpp>
 #include "math/util.hpp"
 #include "gui/menu_manager.hpp"
 #include "object/camera.hpp"
@@ -49,13 +50,6 @@ static const std::string DEFAULT_TITLE_LEVEL = "levels/misc/menu.stl";
 TitleScreen::TitleScreen(Savegame& savegame, bool christmas) :
   m_savegame(savegame),
   m_christmas(christmas),
-  m_logo(Surface::from_file("images/engine/menu/" + std::string(
-#ifdef IS_SUPERTUX_RELEASE
-    "logo.png"
-#else
-    "logo_dev.png"
-#endif
-  ))),
   m_santahat(christmas ? Surface::from_file("images/engine/menu/logo_santahat.png") : nullptr),
   m_frame(Surface::from_file("images/engine/menu/frame.png")),
   m_controller(new CodeController()),
@@ -192,19 +186,26 @@ TitleScreen::draw(Compositor& compositor)
 
   m_titlesession->get_current_sector().draw(context);
 
-  // fades the logo in/out iff we are on the main menu
+  // fades the title in/out iff we are on the main menu
   m_logo_opacity += (MenuManager::instance().get_menu_stack_size() == 1 ? 0.1 : -0.1);
   m_logo_opacity = math::clamp<float>(m_logo_opacity, 0.0, 1.0);
 
   context.set_alpha(m_logo_opacity);
-  context.color().draw_surface(m_logo,
-                               Vector(context.get_width() / 2 - static_cast<float>(m_logo->get_width()) / 2,
-                                      context.get_height() / 2 - static_cast<float>(m_logo->get_height()) / 2 - 200.f),
-                               LAYER_GUI + 1);
+  const std::string title_text = SUPERTUX_BRAND_TITLE;
+  context.color().draw_text(Resources::normal_font,
+                            title_text,
+                            Vector(context.get_width() / 2.f,
+                                   context.get_height() / 2.f - 200.f),
+                            ALIGN_CENTER, LAYER_GUI + 1);
+  context.color().draw_text(Resources::small_font,
+                            _("Open-source platform adventure"),
+                            Vector(context.get_width() / 2.f,
+                                   context.get_height() / 2.f - 170.f),
+                            ALIGN_CENTER, LAYER_GUI + 1);
   if (m_christmas)
   {
     context.color().draw_surface(m_santahat,
-                                 Vector(context.get_width() / 2 - static_cast<float>(m_santahat->get_width()) / 2 + 35.f,
+                                 Vector(context.get_width() / 2 - static_cast<float>(m_santahat->get_width()) / 2 + 60.f,
                                         context.get_height() / 2 - static_cast<float>(m_santahat->get_height()) / 2 - 255.f),
                                  LAYER_GUI + 2);
   }
@@ -298,8 +299,8 @@ void
 TitleScreen::refresh_copyright_text()
 {
   // cppcheck-suppress unknownMacro
-  m_copyright_text = "SuperTux " PACKAGE_VERSION "\n" +
-    _("Copyright") + " (c) 2003-2026 SuperTux Devel Team\n" +
+  m_copyright_text = std::string(SUPERTUX_BRAND_TITLE) + " " PACKAGE_VERSION "\n" +
+    _("Copyright") + " (c) 2003-2026 Tuxium Devel Team\n" +
     _("This game comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to\n"
       "redistribute it under certain conditions; see the license file for details.\n");
 }

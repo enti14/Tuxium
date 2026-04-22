@@ -119,56 +119,56 @@ function initialize()
 
 function textbox()
 {
-  Text.set_text(_("He did it! He actually did it! Tux had beaten the mighty yeti!"));
+  Text.set_text(_("He did it — Tux had defeated the mighty Yeti!"));
   Text.fade_in(0.5);
   wait(4);
   Text.fade_out(0.5);
   
   wait(2);
   
-  Text.set_text(_("While it did not take long for the yeti to get up again, to Tux's relief, he did not throw hands again."));
+  Text.set_text(_("The Yeti quickly got back up, but to Tux's relief, he did not attack again."));
   Text.fade_in(0.5);
   wait(4);
   Text.fade_out(0.5);
   
   wait(1);
   
-  Text.set_text(_("The yeti was furious however! He could not understand how a tiny penguin like Tux could have beaten him in a fight."));
+  Text.set_text(_("Still, the Yeti was furious. He could not understand how such a small penguin had beaten him."));
   Text.fade_in(0.5);
   wait(4);
   Text.fade_out(0.5);
   
   wait(2);
   
-  Text.set_text(_("Almost as if he forgot Tux was there to begin with, the yeti rushed off, grumbling to himself."));
+  Text.set_text(_("As if forgetting Tux entirely, the Yeti stormed off into the blizzard, grumbling to himself."));
   Text.fade_in(0.5);
   wait(4);
   Text.fade_out(0.5);
   
   wait(2);
   
-  Text.set_text(_("Not sure what to make of it, Tux decided to continue moving onwards."));
+  Text.set_text(_("Unsure what it meant, Tux pressed onward."));
   Text.fade_in(0.5);
   wait(4);
   Text.fade_out(0.5);
   
   wait(5);
   
-  Text.set_text(_("As he reached the shore, Tux could already see the Glacier Isle on the horizon."));
+  Text.set_text(_("When he reached the shore, Glacier Isle was already visible on the horizon."));
   Text.fade_in(0.5);
   wait(4);
   Text.fade_out(0.5);
   
   wait(3);
   
-  Text.set_text(_("If he knew Nolok went over there sooner, he could have been there much faster."));
+  Text.set_text(_("If he had known Nolok fled there earlier, he could have saved precious time."));
   Text.fade_in(0.5);
   wait(4);
   Text.fade_out(0.5);
   
   wait(1.5);
   
-  Text.set_text(_("Perhaps that was Nolok's goal with the note he left behind..."));
+  Text.set_text(_("Maybe that was Nolok's plan from the start: to slow Tux down with fear and misdirection."));
   Text.fade_in(0.5);
   wait(4);
   Text.fade_out(0.5);

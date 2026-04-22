@@ -187,6 +187,22 @@ public:
   bool multiplayer_multibind;
   bool multiplayer_buzz_controllers;
   bool multiplayer_no_limit;
+  struct MultiplayerServer
+  {
+    std::string name;
+    std::string address;
+    std::string motd;
+    bool favorite;
+  };
+  std::string multiplayer_server_address;
+  int multiplayer_selected_server;
+  std::vector<MultiplayerServer> multiplayer_servers;
+  bool multiplayer_enable_online;
+  bool multiplayer_allow_lan_discovery;
+  bool multiplayer_host_public;
+  std::string multiplayer_host_name;
+  int multiplayer_host_port;
+  int multiplayer_host_max_players;
 
   std::string repository_url;
 

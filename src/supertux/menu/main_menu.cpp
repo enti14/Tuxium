@@ -51,8 +51,13 @@ bool MainMenu::s_shown_initial_dialogs = false;
 
 MainMenu::MainMenu()
 {
+  add_label(_("Tuxium Hub"));
+  add_hl();
+  add_entry(MNID_QUICKSTART, _("Quick Start"));
   add_entry(MNID_WORLDSET_STORY, _("Start Game"));
   add_entry(MNID_WORLDSET_CONTRIB, _("Contrib Levels"));
+  add_submenu(_("Profiles"), MenuStorage::PROFILE_MENU, MNID_PROFILES);
+  add_submenu(_("Multiplayer"), MenuStorage::MULTIPLAYER_MENU, MNID_MULTIPLAYER);
   // TODO: Manage to build OpenSSL for Emscripten so we can build CURL so we can
   //       build the add-ons so we can re-enable them.
   //       Also see src/addon/downloader.*pp
@@ -65,6 +70,7 @@ MainMenu::MainMenu()
 #ifndef HIDE_NONMOBILE_OPTIONS
   add_entry(MNID_LEVELEDITOR, _("Level Editor"));
 #endif
+  add_hl();
   add_entry(MNID_CREDITS, _("Credits"));
 #if !defined(STEAM_BUILD) && !defined(GOOGLE_PLAY)
   // Links to external purchases are not allowed on Steam or Google Play, including donations
@@ -82,13 +88,13 @@ MainMenu::MainMenu()
   {
     s_shown_initial_dialogs = true;
 #ifdef NETWORKING
-    Dialog::show_confirmation(_("Would you allow SuperTux to connect to the Internet?\n\nThis enables additional features, such as the in-game add-on catalog."),
+    Dialog::show_confirmation(_("Would you allow Tuxium to connect to the Internet?\n\nThis enables additional features, such as the in-game add-on catalog."),
       []()
       {
         g_config->disable_network = false;
 
 # ifndef __EMSCRIPTEN__
-        Dialog::show_confirmation(_("Would you allow SuperTux to check for new releases on startup?\n\nYou will be notified if any are found."),
+        Dialog::show_confirmation(_("Would you allow Tuxium to check for new releases on startup?\n\nYou will be notified if any are found."),
           []()
           {
             g_config->do_release_check = true;
@@ -111,6 +117,13 @@ MainMenu::menu_action(MenuItem& item)
 {
   switch (item.get_id())
   {
+    case MNID_QUICKSTART:
+    {
+      std::unique_ptr<World> world = World::from_directory("levels/world1");
+      GameManager::current()->start_level(*world, "journey_begins.stl");
+      break;
+    }
+
     case MNID_WORLDSET_STORY:
     {
       std::unique_ptr<World> world = World::from_directory("levels/world1");
@@ -143,7 +156,7 @@ MainMenu::menu_action(MenuItem& item)
 
     case MNID_DONATE:
     {
-      Dialog::show_confirmation(_("This will take you to the SuperTux donation page. Are you sure you want to continue?"), [] {
+      Dialog::show_confirmation(_("This will take you to the Tuxium donation page. Are you sure you want to continue?"), [] {
         FileSystem::open_url("https://www.supertux.org/donate.html");
       });
       break;

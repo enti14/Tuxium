@@ -1,0 +1,3 @@
+#pragma once
+
+#define SUPERTUX_BRAND_TITLE "@SUPERTUX_BRAND_TITLE@"

@@ -23,5 +23,22 @@ class MultiplayerMenu final : public Menu
 public:
   MultiplayerMenu();
 
-  void menu_action(MenuItem& item) override {}
+  void menu_action(MenuItem& item) override;
+
+private:
+  enum MenuIDs
+  {
+    MNID_SERVER_REGION = 100,
+    MNID_SERVER_SELECT,
+    MNID_SERVER_ADD,
+    MNID_SERVER_REMOVE,
+    MNID_SERVER_FAVORITE,
+    MNID_HOST_PORT,
+    MNID_HOST_MAX_PLAYERS,
+    MNID_QUICK_JOIN,
+    MNID_HOST_SESSION,
+    MNID_HOST_LAN
+  };
+
+  int m_server_region;
 };

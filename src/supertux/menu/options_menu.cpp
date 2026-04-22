@@ -221,7 +221,7 @@ OptionsMenu::refresh()
         add_toggle(MNID_CHRISTMAS_MODE, _("Force Christmas Mode"), &g_config->christmas_mode);
 
       add_submenu(_("Integrations and presence"), MenuStorage::INTEGRATIONS_MENU)
-      .set_help(_("Manage whether SuperTux should display the levels you play on your social media profiles (Discord)"));
+      .set_help(_("Manage whether Tuxium should display the levels you play on your social media profiles (Discord)"));
 
       if (g_config->developer_mode)
         add_submenu(_("Menu Customization"), MenuStorage::CUSTOM_MENU_MENU)
@@ -274,7 +274,7 @@ OptionsMenu::refresh()
 #if defined(NETWORKING) && !defined(__EMSCRIPTEN__)
       if (!g_config->disable_network)
         add_toggle(MNID_RELEASE_CHECK, _("Check for new releases"), &g_config->do_release_check)
-          .set_help(_("Allows the game to perform checks for new SuperTux releases on startup and notify if any found."));
+          .set_help(_("Allows the game to perform checks for new Tuxium releases on startup and notify if any found."));
 #endif
 
 #ifdef NETWORKING
@@ -766,7 +766,7 @@ OptionsMenu::menu_action(MenuItem& item)
         {
           Dialog::show_message(_("The game couldn't detect your browser resolution.\n"
                                  "This most likely happens because it is not embedded\n"
-                                 "in the SuperTux custom HTML template.\n"));
+                                 "in the Tuxium custom HTML template.\n"));
         }
       }
       break;

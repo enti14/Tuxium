@@ -71,6 +71,10 @@ include(CheckSymbolExists)
 ## Set version strings, detect git version, and other things related to versions
 include(SuperTux/BuildVersion)
 
+set(SUPERTUX_BRAND_TITLE "TUXIUM")
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/supertux/generated_branding.hpp.in
+               ${CMAKE_BINARY_DIR}/generated_branding.hpp @ONLY)
+
 ## For autopackage
 set(APPDATADIR "${CMAKE_INSTALL_PREFIX}/share/games/supertux2")
 
