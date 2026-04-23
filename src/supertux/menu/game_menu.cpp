@@ -49,6 +49,11 @@ GameMenu::GameMenu() :
   }),
   abort_callback([] {
     GameSession::current()->abort_level();
+  }),
+  skip_level_callback([] {
+    MenuManager::instance().clear_menu_stack();
+    GameSession::current()->toggle_pause();
+    GameSession::current()->finish(true);
   })
 {
   Level& level = GameSession::current()->get_current_level();
@@ -66,6 +71,11 @@ GameMenu::GameMenu() :
   }
 
   add_entry(MNID_RESETLEVEL, _("Restart Level"));
+
+  if (g_config->level_skipper_enabled && !Editor::current())
+  {
+    add_entry(MNID_SKIP_LEVEL, _("Skip Level"));
+  }
 
 #ifndef HIDE_NONMOBILE_OPTIONS
   if (g_config->developer_mode && !Editor::current() &&
@@ -176,6 +186,17 @@ GameMenu::menu_action(MenuItem& item)
       else
       {
         abort_callback();
+      }
+      break;
+
+    case MNID_SKIP_LEVEL:
+      if (g_config->confirmation_dialog)
+      {
+        Dialog::show_confirmation(_("Skip this level and mark it as completed?"), skip_level_callback);
+      }
+      else
+      {
+        skip_level_callback();
       }
       break;
   }

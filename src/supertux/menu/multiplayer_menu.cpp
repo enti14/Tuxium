@@ -85,11 +85,37 @@ MultiplayerMenu::MultiplayerMenu()
   add_textfield(_("Host Name"), &g_config->multiplayer_host_name)
     .set_help(_("Name shown to players in the server browser."));
 
+  add_textfield(_("Host Name Tag"), &g_config->multiplayer_host_nametag)
+    .set_help(_("Custom nametag shown above your character in hosted matches."));
+
+  add_textfield(_("Tuxium Skin Pack"), &g_config->multiplayer_host_skin_pack)
+    .set_help(_("Choose which Tuxium skins are available for this server mode."));
+
+  add_textfield(_("Mode Codename"), &g_config->multiplayer_host_mode_codename)
+    .set_help(_("Internal codename for this mode. Use '2i' for the new server-create mode."));
+
   add_intfield(_("Host Port"), &g_config->multiplayer_host_port, MNID_HOST_PORT, true)
     .set_help(_("Server port for direct-connect and hosting (1-65535)."));
 
   add_intfield(_("Host max players"), &g_config->multiplayer_host_max_players, MNID_HOST_MAX_PLAYERS, true)
     .set_help(_("Maximum player slots when hosting a game (2-16)."));
+
+  add_toggle(-7, _("Enable Teams"), &g_config->multiplayer_host_teams_enabled)
+    .set_help(_("Players are grouped into teams in this mode."));
+
+  add_toggle(-8, _("Show Team Levels"), &g_config->multiplayer_host_show_team_levels)
+    .set_help(_("Show teammates and their current level in the HUD."));
+
+  add_toggle(-9, _("Enable PvP Combat"), &g_config->multiplayer_host_enable_pvp)
+    .set_help(_("Use player-vs-player combat while keeping the normal level system."));
+
+  add_toggle(-10, _("Jump Boost on Players"), &g_config->multiplayer_host_jump_boost)
+    .set_help(_("Allow jumping on another player to receive a movement boost."));
+
+  add_inactive(_("PvP Sword Mini-Game: press inventory (I) to equip/unequip sword"));
+
+  add_toggle(-11, _("Global Infinite Level"), &g_config->multiplayer_host_global_infinite_level)
+    .set_help(_("Use a global level progression with no maximum level cap."));
 
   add_entry(MNID_QUICK_JOIN, _("Join Selected Server"));
   add_entry(MNID_HOST_LAN, _("Host LAN Session"));
@@ -197,7 +223,12 @@ MultiplayerMenu::menu_action(MenuItem& item)
       break;
 
     case MNID_HOST_LAN:
+      if (g_config->multiplayer_host_mode_codename.empty())
+        g_config->multiplayer_host_mode_codename = "2i";
       Dialog::show_message(_("Starting LAN host:\n") + g_config->multiplayer_host_name +
+                           _("\nNametag: ") + g_config->multiplayer_host_nametag +
+                           _("\nSkin pack: ") + g_config->multiplayer_host_skin_pack +
+                           _("\nMode codename: ") + g_config->multiplayer_host_mode_codename +
                            _("\nPort: ") + std::to_string(g_config->multiplayer_host_port) +
                            _("\n\nPlayers on your local network can now join."));
       break;
@@ -209,10 +240,20 @@ MultiplayerMenu::menu_action(MenuItem& item)
       }
       else
       {
+        if (g_config->multiplayer_host_mode_codename.empty())
+          g_config->multiplayer_host_mode_codename = "2i";
         Dialog::show_message(_("Hosting internet session:\n") + g_config->multiplayer_host_name +
+                             _("\nNametag: ") + g_config->multiplayer_host_nametag +
+                             _("\nSkin pack: ") + g_config->multiplayer_host_skin_pack +
+                             _("\nMode codename: ") + g_config->multiplayer_host_mode_codename +
                              _("\nAddress: ") + g_config->multiplayer_server_address +
                              _("\nVisibility: ") + (g_config->multiplayer_host_public ? _("Public") : _("Private")) +
-                             _("\nMax players: ") + std::to_string(g_config->multiplayer_host_max_players));
+                             _("\nMax players: ") + std::to_string(g_config->multiplayer_host_max_players) +
+                             _("\nTeams: ") + (g_config->multiplayer_host_teams_enabled ? _("Enabled") : _("Disabled")) +
+                             _("\nShow levels: ") + (g_config->multiplayer_host_show_team_levels ? _("Enabled") : _("Disabled")) +
+                             _("\nPvP: ") + (g_config->multiplayer_host_enable_pvp ? _("Enabled") : _("Disabled")) +
+                             _("\nJump boost: ") + (g_config->multiplayer_host_jump_boost ? _("Enabled") : _("Disabled")) +
+                             _("\nGlobal infinite level: ") + (g_config->multiplayer_host_global_infinite_level ? _("Enabled") : _("Disabled")));
       }
       break;
 

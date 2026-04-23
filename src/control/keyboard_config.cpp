@@ -54,6 +54,7 @@ KeyboardConfig::KeyboardConfig() :
   m_keymap[SDL_SCANCODE_SPACE]     = {0, Control::JUMP};
   m_keymap[SDL_SCANCODE_LCTRL]     = {0, Control::ACTION};
   m_keymap[SDL_SCANCODE_LSHIFT]    = {0, Control::ITEM};
+  m_keymap[SDL_SCANCODE_I]         = {0, Control::ITEM};
   m_keymap[SDL_SCANCODE_ESCAPE]    = {0, Control::ESCAPE};
   m_keymap[SDL_SCANCODE_P]         = {0, Control::START};
   m_keymap[SDL_SCANCODE_PAUSE]     = {0, Control::START};

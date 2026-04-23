@@ -201,8 +201,19 @@ public:
   bool multiplayer_allow_lan_discovery;
   bool multiplayer_host_public;
   std::string multiplayer_host_name;
+  std::string multiplayer_host_nametag;
+  std::string multiplayer_host_skin_pack;
+  std::string multiplayer_host_mode_codename;
   int multiplayer_host_port;
   int multiplayer_host_max_players;
+  bool multiplayer_host_teams_enabled;
+  bool multiplayer_host_show_team_levels;
+  bool multiplayer_host_enable_pvp;
+  bool multiplayer_host_jump_boost;
+  bool multiplayer_host_global_infinite_level;
+  bool level_skipper_unlocked;
+  bool level_skipper_enabled;
+  std::string level_skipper_unlock_code;
 
   std::string repository_url;
 

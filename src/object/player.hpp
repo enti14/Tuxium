@@ -585,6 +585,10 @@ private:
   Timer m_skidding_timer;
   Timer m_post_damage_safety_timer;
   Timer m_temp_safety_timer;
+  bool m_pvp_sword_enabled;
+  bool m_pvp_immunity;
+  Timer m_pvp_disable_countdown;
+  Timer m_pvp_sword_fx_timer;
 
   /**
    * @scripting

@@ -157,8 +157,19 @@ Config::Config() :
   multiplayer_allow_lan_discovery(true),
   multiplayer_host_public(false),
   multiplayer_host_name("My Tuxium Server"),
+  multiplayer_host_nametag("TuxHost"),
+  multiplayer_host_skin_pack("Classic Tuxium"),
+  multiplayer_host_mode_codename("2i"),
   multiplayer_host_port(7777),
   multiplayer_host_max_players(4),
+  multiplayer_host_teams_enabled(true),
+  multiplayer_host_show_team_levels(true),
+  multiplayer_host_enable_pvp(true),
+  multiplayer_host_jump_boost(true),
+  multiplayer_host_global_infinite_level(true),
+  level_skipper_unlocked(false),
+  level_skipper_enabled(false),
+  level_skipper_unlock_code(""),
   touch_haptic_feedback(true),
   touch_just_directional(true),
   repository_url()
@@ -319,8 +330,19 @@ Config::load()
   config_mapping.get("multiplayer_allow_lan_discovery", multiplayer_allow_lan_discovery);
   config_mapping.get("multiplayer_host_public", multiplayer_host_public);
   config_mapping.get("multiplayer_host_name", multiplayer_host_name);
+  config_mapping.get("multiplayer_host_nametag", multiplayer_host_nametag);
+  config_mapping.get("multiplayer_host_skin_pack", multiplayer_host_skin_pack);
+  config_mapping.get("multiplayer_host_mode_codename", multiplayer_host_mode_codename);
   config_mapping.get("multiplayer_host_port", multiplayer_host_port);
   config_mapping.get("multiplayer_host_max_players", multiplayer_host_max_players);
+  config_mapping.get("multiplayer_host_teams_enabled", multiplayer_host_teams_enabled);
+  config_mapping.get("multiplayer_host_show_team_levels", multiplayer_host_show_team_levels);
+  config_mapping.get("multiplayer_host_enable_pvp", multiplayer_host_enable_pvp);
+  config_mapping.get("multiplayer_host_jump_boost", multiplayer_host_jump_boost);
+  config_mapping.get("multiplayer_host_global_infinite_level", multiplayer_host_global_infinite_level);
+  config_mapping.get("level_skipper_unlocked", level_skipper_unlocked);
+  config_mapping.get("level_skipper_enabled", level_skipper_enabled);
+  config_mapping.get("level_skipper_unlock_code", level_skipper_unlock_code);
   std::optional<ReaderCollection> multiplayer_servers_mapping;
   if (config_mapping.get("multiplayer_servers", multiplayer_servers_mapping))
   {
@@ -545,8 +567,19 @@ Config::save()
   writer.write("multiplayer_allow_lan_discovery", multiplayer_allow_lan_discovery);
   writer.write("multiplayer_host_public", multiplayer_host_public);
   writer.write("multiplayer_host_name", multiplayer_host_name);
+  writer.write("multiplayer_host_nametag", multiplayer_host_nametag);
+  writer.write("multiplayer_host_skin_pack", multiplayer_host_skin_pack);
+  writer.write("multiplayer_host_mode_codename", multiplayer_host_mode_codename);
   writer.write("multiplayer_host_port", multiplayer_host_port);
   writer.write("multiplayer_host_max_players", multiplayer_host_max_players);
+  writer.write("multiplayer_host_teams_enabled", multiplayer_host_teams_enabled);
+  writer.write("multiplayer_host_show_team_levels", multiplayer_host_show_team_levels);
+  writer.write("multiplayer_host_enable_pvp", multiplayer_host_enable_pvp);
+  writer.write("multiplayer_host_jump_boost", multiplayer_host_jump_boost);
+  writer.write("multiplayer_host_global_infinite_level", multiplayer_host_global_infinite_level);
+  writer.write("level_skipper_unlocked", level_skipper_unlocked);
+  writer.write("level_skipper_enabled", level_skipper_enabled);
+  writer.write("level_skipper_unlock_code", level_skipper_unlock_code);
   writer.start_list("multiplayer_servers");
   for (const auto& server : multiplayer_servers)
   {
