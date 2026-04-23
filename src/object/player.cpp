@@ -213,6 +213,10 @@ Player::Player(PlayerStatus& player_status, const std::string& name_, int player
   m_skidding_timer(),
   m_post_damage_safety_timer(),
   m_temp_safety_timer(),
+  m_pvp_sword_enabled(false),
+  m_pvp_immunity(false),
+  m_pvp_disable_countdown(),
+  m_pvp_sword_fx_timer(),
   m_is_intentionally_safe(false),
   m_kick_timer(),
   m_buttjump_timer(),
@@ -453,6 +457,31 @@ Player::update(float dt_sec)
     }
 
     return;
+  }
+
+  if (m_controller->pressed(Control::ITEM))
+  {
+    if (m_pvp_immunity)
+    {
+      m_pvp_immunity = false;
+      m_pvp_sword_enabled = true;
+    }
+    else if (m_pvp_sword_enabled)
+    {
+      if (!m_pvp_disable_countdown.started())
+        m_pvp_disable_countdown.start(5.f);
+    }
+    else
+    {
+      m_pvp_sword_enabled = true;
+    }
+  }
+
+  if (m_pvp_disable_countdown.check())
+  {
+    m_pvp_sword_enabled = false;
+    m_pvp_immunity = true;
+    m_pvp_disable_countdown.stop();
   }
 
   check_bounds();
@@ -2460,6 +2489,114 @@ Player::collision(MovingObject& other, const CollisionHit& hit)
 
   auto player = dynamic_cast<Player*> (&other);
   if (player) {
+    if (!g_config->multiplayer_host_enable_pvp || Sector::get().get_players().size() < 2)
+      return ABORT_MOVE;
+
+    // Resolve PvP only once per player pair.
+    if (get_id() > player->get_id())
+      return ABORT_MOVE;
+
+    if (!is_active() || !player->is_active())
+      return ABORT_MOVE;
+
+    if (m_pvp_immunity || player->m_pvp_immunity)
+      return ABORT_MOVE;
+
+    const auto in_sword_arc = [](const Player& attacker, const Player& defender) {
+      const bool flower_sword = attacker.get_bonus() == BONUS_FIRE ||
+                                attacker.get_bonus() == BONUS_ICE ||
+                                attacker.get_bonus() == BONUS_AIR ||
+                                attacker.get_bonus() == BONUS_EARTH;
+      const float sword_range_x = flower_sword ? 124.f : 92.f;
+      const float sword_range_y = 56.f;
+      const float dx = defender.get_bbox().get_middle().x - attacker.get_bbox().get_middle().x;
+      const float dy = std::abs(defender.get_bbox().get_middle().y - attacker.get_bbox().get_middle().y);
+      bool facing_right = attacker.get_physic().get_velocity_x() >= 0.f;
+      if (attacker.m_controller->hold(Control::LEFT))
+        facing_right = false;
+      else if (attacker.m_controller->hold(Control::RIGHT))
+        facing_right = true;
+      const bool in_front = facing_right ? (dx > 0.f) : (dx < 0.f);
+      return in_front && std::abs(dx) <= sword_range_x && dy <= sword_range_y;
+    };
+
+    const auto sword_color = [](const Player& attacker) {
+      switch (attacker.get_bonus())
+      {
+        case BONUS_FIRE: return Color(1.f, 0.42f, 0.15f);
+        case BONUS_ICE: return Color(0.45f, 0.9f, 1.f);
+        case BONUS_AIR: return Color(0.76f, 0.9f, 1.f);
+        case BONUS_EARTH: return Color(0.5f, 0.85f, 0.4f);
+        default: return Color::WHITE;
+      }
+    };
+
+    const auto spawn_sword_fx = [&](const Player& attacker, const Player& defender) {
+      Vector center = defender.get_bbox().get_middle();
+      Sector::get().add<SpriteParticle>("images/particles/sparkle.sprite", "small",
+                                        center, ANCHOR_MIDDLE, Vector(0.f, -120.f), Vector(0.f, 240.f),
+                                        LAYER_OBJECTS - 1, false, 0, sword_color(attacker));
+    };
+
+    const bool my_sword_attack = m_pvp_sword_enabled &&
+                                 !m_pvp_disable_countdown.started() &&
+                                 m_controller->pressed(Control::ACTION) &&
+                                 in_sword_arc(*this, *player);
+    const bool other_sword_attack = player->m_pvp_sword_enabled &&
+                                    !player->m_pvp_disable_countdown.started() &&
+                                    player->m_controller->pressed(Control::ACTION) &&
+                                    in_sword_arc(*player, *this);
+
+    if (my_sword_attack && other_sword_attack)
+    {
+      spawn_sword_fx(*this, *player);
+      spawn_sword_fx(*player, *this);
+      player->kill(false);
+      kill(false);
+      return FORCE_MOVE;
+    }
+    else if (my_sword_attack)
+    {
+      spawn_sword_fx(*this, *player);
+      player->kill(get_bonus() == BONUS_FIRE || get_bonus() == BONUS_ICE || get_bonus() == BONUS_AIR || get_bonus() == BONUS_EARTH);
+      m_physic.set_velocity_x(m_physic.get_velocity_x() * 0.75f);
+      return FORCE_MOVE;
+    }
+    else if (other_sword_attack)
+    {
+      spawn_sword_fx(*player, *this);
+      kill(player->get_bonus() == BONUS_FIRE || player->get_bonus() == BONUS_ICE ||
+           player->get_bonus() == BONUS_AIR || player->get_bonus() == BONUS_EARTH);
+      player->m_physic.set_velocity_x(player->m_physic.get_velocity_x() * 0.75f);
+      return FORCE_MOVE;
+    }
+
+    const bool hit_from_above = (get_bbox().get_bottom() < (player->get_bbox().get_top() + 16.f) &&
+                                 m_physic.get_velocity_y() > 0.f);
+    if (hit_from_above)
+    {
+      player->kill(false);
+      if (g_config->multiplayer_host_jump_boost)
+      {
+        m_physic.set_velocity_y(-500.f);
+      }
+      return FORCE_MOVE;
+    }
+
+    const float my_speed = glm::length(get_physic().get_velocity());
+    const float other_speed = glm::length(player->get_physic().get_velocity());
+
+    if (my_speed > other_speed + 40.f)
+    {
+      player->kill(false);
+      return FORCE_MOVE;
+    }
+    else if (other_speed > my_speed + 40.f)
+    {
+      kill(false);
+      return FORCE_MOVE;
+    }
+
     return ABORT_MOVE;
   }
 

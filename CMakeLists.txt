@@ -483,6 +483,30 @@ if(ANDROID)
   target_compile_definitions(supertux2 PUBLIC -D__ANDROID__ -DANDROID)
 endif()
 
+set(SUPERTUX_APP_ICON_PNG "${CMAKE_CURRENT_SOURCE_DIR}/data/images/engine/icons/supertux.png")
+set(SUPERTUX_SWORD_ICON_PNG "${CMAKE_CURRENT_SOURCE_DIR}/data/images/engine/icons/pvp_sword.png")
+find_package(Python3 COMPONENTS Interpreter QUIET)
+if(Python3_Interpreter_FOUND)
+  set(SUPERTUX_GENERATED_ASSETS_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated-assets")
+  set(SUPERTUX_APP_ICON_PNG "${SUPERTUX_GENERATED_ASSETS_DIR}/supertux.png")
+  set(SUPERTUX_SWORD_ICON_PNG "${SUPERTUX_GENERATED_ASSETS_DIR}/pvp_sword.png")
+
+  add_custom_command(
+    OUTPUT "${SUPERTUX_APP_ICON_PNG}" "${SUPERTUX_SWORD_ICON_PNG}"
+    COMMAND ${Python3_EXECUTABLE}
+            "${CMAKE_CURRENT_SOURCE_DIR}/tools/generate_runtime_pngs.py"
+            --app-icon "${SUPERTUX_APP_ICON_PNG}"
+            --sword-icon "${SUPERTUX_SWORD_ICON_PNG}"
+    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/tools/generate_runtime_pngs.py"
+    COMMENT "Generating runtime PNG assets (app icon + PvP sword icon)"
+    VERBATIM
+  )
+
+  add_custom_target(generate_runtime_png_assets ALL
+    DEPENDS "${SUPERTUX_APP_ICON_PNG}" "${SUPERTUX_SWORD_ICON_PNG}"
+  )
+endif()
+
 ## Install stuff
 include(SuperTux/BuildInstall)
 

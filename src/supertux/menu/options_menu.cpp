@@ -201,12 +201,18 @@ OptionsMenu::refresh()
     {
       insert_label(_("Extras"));
 
+      add_label(_("Profile & Online"));
+      add_hl();
+
       if (m_complete)
         add_submenu(_("Select Profile"), MenuStorage::PROFILE_MENU)
           .set_help(_("Select a profile to play with"));
 
       add_submenu(_("Multiplayer settings"), MenuStorage::MULTIPLAYER_MENU)
         .set_help(_("Configure settings specific to multiplayer"));
+
+      add_label(_("Gameplay"));
+      add_hl();
 
       add_toggle(MNID_TRANSITIONS, _("Enable transitions"), &g_config->transitions_enabled)
         .set_help(_("Enable screen transitions and smooth menu animation"));
@@ -216,6 +222,27 @@ OptionsMenu::refresh()
 
       add_toggle(MNID_CUSTOM_TITLE_LEVELS, _("Custom title screen levels"), &g_config->custom_title_levels)
         .set_help(_("Allow overriding the title screen level, when loading certain worlds"));
+
+      add_label(_("Standard Game Tools"));
+      add_hl();
+
+      add_textfield(_("Level Skipper Code"), &g_config->level_skipper_unlock_code, MNID_LEVEL_SKIPPER_CODE)
+        .set_help(_("Enter unlock code 1404, then apply to unlock level skipping in the standard game."));
+
+      add_entry(MNID_LEVEL_SKIPPER_UNLOCK, _("Apply Level Skipper Code"));
+
+      if (g_config->level_skipper_unlocked)
+      {
+        add_toggle(MNID_LEVEL_SKIPPER_ENABLED, _("Enable Level Skipper (Standard Game)"), &g_config->level_skipper_enabled)
+          .set_help(_("When enabled, a Skip Level button appears in the in-game pause menu."));
+      }
+      else
+      {
+        add_inactive(_("Level Skipper is locked"));
+      }
+
+      add_label(_("Interface & Integrations"));
+      add_hl();
 
       if (g_config->christmas_mode)
         add_toggle(MNID_CHRISTMAS_MODE, _("Force Christmas Mode"), &g_config->christmas_mode);
@@ -886,6 +913,23 @@ OptionsMenu::menu_action(MenuItem& item)
     case MNID_DISABLE_NETWORK:
       refresh();
       set_active_item(MNID_DISABLE_NETWORK);
+      break;
+
+    case MNID_LEVEL_SKIPPER_UNLOCK:
+      if (g_config->level_skipper_unlock_code == "1404")
+      {
+        g_config->level_skipper_unlocked = true;
+        g_config->level_skipper_enabled = true;
+        Dialog::show_message(_("Level skipper unlocked for standard gameplay."));
+      }
+      else
+      {
+        g_config->level_skipper_unlocked = false;
+        g_config->level_skipper_enabled = false;
+        Dialog::show_message(_("Wrong code. Enter 1404 to unlock level skipper."));
+      }
+      refresh();
+      set_active_item(MNID_LEVEL_SKIPPER_UNLOCK);
       break;
 
     default:

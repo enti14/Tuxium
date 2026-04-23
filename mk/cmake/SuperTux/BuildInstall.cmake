@@ -1,5 +1,5 @@
 if(WIN32 AND NOT UNIX)
-  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/data/images/engine/icons/supertux.png
+  install(FILES ${SUPERTUX_APP_ICON_PNG}
                 ${CMAKE_CURRENT_SOURCE_DIR}/data/images/engine/icons/supertux.ico
           DESTINATION ".")
 
@@ -30,13 +30,13 @@ else()
     install(FILES ${CMAKE_BINARY_DIR}/tools/darwin/info.plist DESTINATION "SuperTux.app/Contents/")
     install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/tools/darwin/receipt DESTINATION "SuperTux.app/Contents/_MASReceipt/")
 
-    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/data/images/engine/icons/supertux.png ${CMAKE_CURRENT_SOURCE_DIR}/data/images/engine/icons/supertux.icns DESTINATION "SuperTux.app/Contents/Resources/")
+    install(FILES ${SUPERTUX_APP_ICON_PNG} ${CMAKE_CURRENT_SOURCE_DIR}/data/images/engine/icons/supertux.icns DESTINATION "SuperTux.app/Contents/Resources/")
 
   else()
     # HACK: Flatpak is dumb right now and still uses nightly icons, so ignore that case
     if(IS_SUPERTUX_RELEASE AND NOT FLATPAK)
       set(LINUX_DESKTOP_ICON "supertux2")
-      install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/data/images/engine/icons/supertux.png ${CMAKE_CURRENT_SOURCE_DIR}/data/images/engine/icons/supertux.xpm DESTINATION "share/pixmaps/")
+      install(FILES ${SUPERTUX_APP_ICON_PNG} ${CMAKE_CURRENT_SOURCE_DIR}/data/images/engine/icons/supertux.xpm DESTINATION "share/pixmaps/")
     else()
       set(LINUX_DESKTOP_ICON "supertux-nightly")
       install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/data/images/engine/icons/supertux-nightly.png ${CMAKE_CURRENT_SOURCE_DIR}/data/images/engine/icons/supertux.xpm DESTINATION "share/pixmaps/")
@@ -98,6 +98,11 @@ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/data/images
                   ${CMAKE_CURRENT_SOURCE_DIR}/data/sounds
                   ${CMAKE_CURRENT_SOURCE_DIR}/data/locale
         DESTINATION ${INSTALL_SUBDIR_SHARE})
+
+if(Python3_Interpreter_FOUND OR EXISTS "${SUPERTUX_SWORD_ICON_PNG}")
+  install(FILES ${SUPERTUX_SWORD_ICON_PNG}
+          DESTINATION ${INSTALL_SUBDIR_SHARE}/images/engine/icons)
+endif()
 
 if(CMAKE_BUILD_TYPE MATCHES "Release|RelWithDebInfo")
   install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/data/levels

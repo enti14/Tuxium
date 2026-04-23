@@ -29,6 +29,7 @@ private:
   std::function<void ()> reset_checkpoint_callback;
   // stores callback for level abort
   std::function<void ()> abort_callback;
+  std::function<void ()> skip_level_callback;
 
 public:
   GameMenu();
@@ -41,6 +42,7 @@ private:
     MNID_RESETLEVEL,
     MNID_RESETLEVELCHECKPOINT,
     MNID_EDITLEVEL,
+    MNID_SKIP_LEVEL,
     MNID_ABORTLEVEL
   };
 
